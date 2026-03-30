@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LED Display Solutions – NeXGeN InFiNiTy</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--yellow:#FFB800;--yellow-bright:#FFD000;--yellow-dim:#CC9200;--black:#0A0A0A;--black-mid:#111111;--black-card:#161616;--black-border:#222222;--white:#F5F5F5;--gray:#888888}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--black);color:var(--white);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none}
+  .cursor{width:12px;height:12px;background:var(--yellow);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference}
+  .cursor-ring{width:36px;height:36px;border:1.5px solid var(--yellow);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.4}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(10,10,10,0.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--black-border);transition:padding 0.3s}
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .logo-infinity{width:44px;height:44px}
+  .logo-infinity svg{width:100%;height:100%}
+  .nav-brand{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:var(--yellow);letter-spacing:2px}
+  .nav-sub{font-family:'Rajdhani',sans-serif;font-size:0.7rem;color:var(--gray);letter-spacing:3px;text-transform:uppercase}
+  .nav-links{display:flex;gap:36px;list-style:none}
+  .nav-links a{color:var(--gray);text-decoration:none;font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;font-weight:600;transition:color 0.2s;position:relative}
+  .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--yellow);transition:width 0.3s}
+  .nav-links a:hover{color:var(--yellow)}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{background:var(--yellow);color:var(--black);padding:10px 24px;border:none;font-family:'Orbitron',monospace;font-size:0.75rem;font-weight:700;letter-spacing:2px;cursor:pointer;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all 0.2s}
+  .nav-cta:hover{background:var(--yellow-bright);transform:scale(1.04)}
+
+  /* BREADCRUMB */
+  .breadcrumb{padding:110px 48px 0;display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--gray);letter-spacing:2px}
+  .breadcrumb a{color:var(--yellow);text-decoration:none}
+  .breadcrumb a:hover{text-decoration:underline}
+  .breadcrumb span{color:var(--gray)}
+
+  /* PAGE HERO */
+  .page-hero{padding:48px 48px 80px;position:relative;overflow:hidden;border-bottom:1px solid var(--black-border)}
+  .page-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,184,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,184,0,0.04) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
+  @keyframes gridMove{to{background-position:60px 60px}}
+  .page-hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .page-hero-label{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--yellow);letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+  .page-hero-label::before{content:'';width:30px;height:1px;background:var(--yellow)}
+  .page-hero h1{font-family:'Orbitron',monospace;font-size:clamp(2rem,4.5vw,3.8rem);font-weight:900;line-height:1.1;margin-bottom:20px}
+  .page-hero h1 .y{color:var(--yellow)}
+  .page-hero p{color:var(--gray);font-size:1.15rem;line-height:1.8;margin-bottom:32px}
+  .btn-primary{background:var(--yellow);color:var(--black);padding:16px 36px;border:none;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;letter-spacing:2px;cursor:pointer;text-decoration:none;display:inline-block;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:all 0.2s;box-shadow:0 0 30px rgba(255,184,0,0.3)}
+  .btn-primary:hover{background:var(--yellow-bright);box-shadow:0 0 50px rgba(255,184,0,0.5);transform:translateY(-2px)}
+  .btn-wa{background:#25D366;color:#fff;padding:16px 36px;border:none;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;letter-spacing:2px;cursor:pointer;text-decoration:none;display:inline-block;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:all 0.2s;margin-left:16px}
+  .btn-wa:hover{background:#1ebe5d;transform:translateY(-2px)}
+  .hero-btns{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+  /* LED DEMO VISUAL */
+  .led-demo{display:flex;flex-direction:column;gap:16px}
+  .led-board{background:#0a0a0a;border:3px solid #222;border-radius:6px;padding:20px;overflow:hidden;box-shadow:0 0 40px rgba(255,34,0,0.12)}
+  .led-text-red{font-family:'Space Mono',monospace;font-size:1.6rem;color:#ff2200;text-shadow:0 0 12px #ff2200,0 0 24px #ff3300;white-space:nowrap;display:inline-block;animation:ledScroll 9s linear infinite}
+  .led-text-green{font-family:'Space Mono',monospace;font-size:1.1rem;color:#00ff44;text-shadow:0 0 10px #00ff44;white-space:nowrap;display:inline-block;animation:ledScroll 14s linear infinite}
+  @keyframes ledScroll{0%{transform:translateX(100%)}100%{transform:translateX(-200%)}}
+  .gold-board{background:#0a0a0a;border:2px solid #222;border-radius:4px;padding:20px}
+  .gold-title{color:#FFB800;font-family:'Space Mono',monospace;font-size:0.75rem;letter-spacing:2px;margin-bottom:14px}
+  .gold-row{display:flex;justify-content:space-between;margin-bottom:8px}
+  .gold-label{color:#888;font-size:0.85rem}
+  .gold-val{color:#ff2200;text-shadow:0 0 8px #ff2200;font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700}
+
+  /* SECTIONS */
+  section{padding:80px 48px}
+  .section-inner{max-width:1200px;margin:0 auto}
+  .section-label{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--yellow);letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+  .section-label::before{content:'';width:30px;height:1px;background:var(--yellow)}
+  .section-title{font-family:'Orbitron',monospace;font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:900;line-height:1.1;margin-bottom:20px}
+  .section-title .y{color:var(--yellow)}
+
+  /* PRODUCT CARDS */
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
+  .product-card{background:var(--black-card);border:1px solid var(--black-border);padding:36px 28px;transition:border-color 0.3s,transform 0.3s;position:relative;overflow:hidden}
+  .product-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--yellow);transform:scaleX(0);transform-origin:left;transition:transform 0.3s}
+  .product-card:hover{border-color:rgba(255,184,0,0.4);transform:translateY(-4px)}
+  .product-card:hover::after{transform:scaleX(1)}
+  .product-icon{font-size:2.2rem;margin-bottom:18px;display:block}
+  .product-card h3{font-family:'Orbitron',monospace;font-size:0.9rem;color:var(--yellow);margin-bottom:10px;letter-spacing:1px}
+  .product-card p{color:var(--gray);font-size:0.95rem;line-height:1.6}
+
+  /* FEATURES LIST */
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:40px}
+  .feature-item{display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--black-card);border:1px solid var(--black-border)}
+  .feature-bullet{width:8px;height:8px;background:var(--yellow);border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 8px var(--yellow)}
+  .feature-item p{color:var(--white);font-size:1rem;font-weight:600}
+
+  /* CTA BAND */
+  .cta-band{background:linear-gradient(135deg,#1a1400,#0a0a0a);border:1px solid rgba(255,184,0,0.2);padding:64px 48px;text-align:center;margin-top:0}
+  .cta-band h2{font-family:'Orbitron',monospace;font-size:clamp(1.5rem,3vw,2.2rem);color:var(--yellow);margin-bottom:16px}
+  .cta-band p{color:var(--gray);font-size:1.1rem;max-width:500px;margin:0 auto 36px}
+
+  /* FOOTER */
+  footer{background:var(--black-mid);border-top:1px solid var(--black-border);padding:40px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+  .footer-brand{font-family:'Orbitron',monospace;color:var(--yellow);font-size:1rem;font-weight:700}
+  .footer-copy{color:var(--gray);font-size:0.85rem;margin-top:4px}
+  .footer-links{display:flex;gap:24px}
+  .footer-links a{color:var(--gray);text-decoration:none;font-size:0.85rem;transition:color 0.2s}
+  .footer-links a:hover{color:var(--yellow)}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--black)}
+  ::-webkit-scrollbar-thumb{background:var(--yellow)}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){nav{padding:14px 20px}.nav-links{display:none}.page-hero-inner{grid-template-columns:1fr}.breadcrumb{padding:90px 20px 0}section{padding:56px 20px}.page-hero{padding:32px 20px 60px}footer{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="mainNav">
+  <a href="../index.html" class="nav-logo">
+    <div class="logo-infinity">
+      <img src="logo/nexgenlogo.png" alt="Logo" style="width:44px;height:44px;object-fit:contain;">
+        <ellipse cx="20" cy="20" rx="18" ry="18" fill="#FFB800" opacity="0.95"/>
+        <ellipse cx="60" cy="20" rx="18" ry="18" fill="#FFB800" opacity="0.95"/>
+        <ellipse cx="20" cy="20" rx="8" ry="8" fill="#0A0A0A" opacity="0.6"/>
+        <ellipse cx="60" cy="20" rx="8" ry="8" fill="#0A0A0A" opacity="0.6"/>
+      </svg>
+    </div>
+    <div><div class="nav-brand">NeXGeN</div><div class="nav-sub">InFiNiTy</div></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html#services">Services</a></li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <a href="../index.html#contact" class="nav-cta">Get Quote</a>
+</nav>
+
+<div class="breadcrumb">
+  <a href="../index.html">Home</a><span>/</span><span>LED Display Solutions</span>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="reveal">
+      <div class="page-hero-label">Service 01</div>
+      <h1>LED <span class="y">Display</span> Solutions</h1>
+      <p>We design and build eye-catching LED display systems for shops, businesses, jewellers, malls, and more. Our displays work 24/7 to promote your brand and communicate your message — bright, bold, and impossible to ignore.</p>
+      <div class="hero-btns">
+        <a href="https://wa.me/917058873507?text=Hi%2C%20I%20am%20interested%20in%20LED%20Display%20Solutions%20from%20NeXGeN%20InFiNiTy.%20Please%20share%20more%20details." target="_blank" class="btn-wa">💬 Start Enquiry on WhatsApp</a>
+      </div>
+    </div>
+    <div class="led-demo reveal">
+      <div class="led-board">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;gap:6px"><div style="width:8px;height:8px;background:#ff2200;border-radius:50%;box-shadow:0 0 6px #ff2200"></div><div style="width:8px;height:8px;background:#ff2200;border-radius:50%;box-shadow:0 0 6px #ff2200"></div></div>
+          <div style="display:flex;gap:6px"><div style="width:8px;height:8px;background:#ff2200;border-radius:50%;box-shadow:0 0 6px #ff2200"></div><div style="width:8px;height:8px;background:#ff2200;border-radius:50%;box-shadow:0 0 6px #ff2200"></div></div>
+        </div>
+        <div style="overflow:hidden;text-align:center"><span class="led-text-red">⬛ LED DISPLAY &nbsp;&nbsp; NEXGEN INFINITY &nbsp;&nbsp; BRIGHT DISPLAYS THAT SELL ⬛ LED DISPLAY &nbsp;&nbsp; NEXGEN INFINITY</span></div>
+        <div style="display:flex;justify-content:space-between;margin-top:12px">
+          <div style="display:flex;gap:6px"><div style="width:8px;height:8px;background:#ff2200;border-radius:50%;box-shadow:0 0 6px #ff2200"></div></div>
+          <div style="display:flex;gap:6px"><div style="width:8px;height:8px;background:#ff2200;border-radius:50%;box-shadow:0 0 6px #ff2200"></div></div>
+        </div>
+      </div>
+      <div class="gold-board">
+        <div class="gold-title">📊 GOLD RATE DISPLAY BOARD</div>
+        <div class="gold-row"><span class="gold-label">22K GOLD / 8gm</span><span class="gold-val">2,60,000</span></div>
+        <div class="gold-row"><span class="gold-label">22K GOLD / 1gm</span><span class="gold-val">32,500</span></div>
+        <div class="gold-row" style="margin-bottom:0"><span class="gold-label">SILVER / 1gm</span><span class="gold-val">2,50.50</span></div>
+      </div>
+      <div class="led-board" style="text-align:center">
+        <span class="led-text-red" style="font-size:1.3rem">WELCOME! &nbsp;&nbsp; NeXGeN InFiNiTy &nbsp;&nbsp; WELCOME! &nbsp;&nbsp; आपले स्वागत आहे</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section style="background:var(--black-mid)">
+  <div class="section-inner">
+    <div class="section-label reveal">What We Offer</div>
+    <h2 class="section-title reveal">Our LED <span class="y">Products</span></h2>
+    <p style="color:var(--gray);font-size:1.05rem;max-width:600px" class="reveal">From single-line scrolling boards to full-colour multi-panel systems — we have a display for every requirement and budget.</p>
+    <div class="products-grid">
+      <div class="product-card reveal">
+        <span class="product-icon">📜</span>
+        <h3>Scrolling Text Displays</h3>
+        <p>Single and multi-line scrolling LED boards for shops, showrooms, hospitals, and offices. Custom text, speed, and color.</p>
+      </div>
+      <div class="product-card reveal">
+        <span class="product-icon">🏪</span>
+        <h3>LED Boards for Shops & Ads</h3>
+        <p>Attention-grabbing outdoor and indoor LED signage to advertise your products, offers, and brand 24 hours a day.</p>
+      </div>
+      <div class="product-card reveal">
+        <span class="product-icon">📨</span>
+        <h3>Moving Message Displays</h3>
+        <p>Programmable moving message boards ideal for banks, malls, clinics, bus stands, and public spaces.</p>
+      </div>
+      <div class="product-card reveal">
+        <span class="product-icon">💰</span>
+        <h3>Gold & Price Rate Boards</h3>
+        <p>Real-time gold, silver, and commodity price display boards widely used by jewellers and commodity traders across Kolhapur.</p>
+      </div>
+      <div class="product-card reveal">
+        <span class="product-icon">🔧</span>
+        <h3>Custom LED Projects</h3>
+        <p>Have something specific in mind? We build fully custom LED solutions — any size, color, shape, or control method.</p>
+      </div>
+      <div class="product-card reveal">
+        <span class="product-icon">🌦️</span>
+        <h3>Indoor & Outdoor Solutions</h3>
+        <p>Weatherproof outdoor displays with high brightness for sunlight visibility, and sleek indoor units for premium interiors.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-inner">
+    <div class="section-label reveal">Why Choose Us</div>
+    <h2 class="section-title reveal">Display <span class="y">Features</span></h2>
+    <div class="features-grid">
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>High-brightness LEDs visible in direct sunlight</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Wireless & remote control via mobile app</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Custom text, graphics, and animation support</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Energy-efficient, long-life LED modules</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Indoor & outdoor weatherproof variants</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Easy content update — change messages anytime</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Available in red, green, blue, white & full-colour</p></div>
+      <div class="feature-item reveal"><div class="feature-bullet"></div><p>Installation & after-sales support included</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-band reveal">
+  <h2>Ready for a Display That Sells?</h2>
+  <p>Tell us your requirements and we'll get back to you with a custom quote. Fast turnaround, quality guaranteed.</p>
+  <a href="https://wa.me/917058873507?text=Hi%2C%20I%20want%20an%20LED%20Display%20for%20my%20shop.%20Please%20guide%20me." target="_blank" class="btn-wa" style="font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;letter-spacing:2px;padding:18px 44px;background:#25D366;color:#fff;text-decoration:none;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);display:inline-block;transition:all 0.2s">💬 Start Enquiry on WhatsApp</a>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-brand">NeXGeN InFiNiTy</div>
+    <div class="footer-copy">© 2025 NeXGen Infinity. All Rights Reserved.</div>
+  </div>
+  <div class="footer-links">
+    <a href="../index.html">Home</a>
+    <a href="../index.html#services">Services</a>
+    <a href="../index.html#contact">Contact</a>
+  </div>
+  <div style="color:var(--gray);font-size:0.8rem;">Kolhapur, Maharashtra 🇮🇳</div>
+</footer>
+
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  document.addEventListener('mousemove',e=>{cursor.style.transform=`translate(${e.clientX-6}px,${e.clientY-6}px)`;ring.style.transform=`translate(${e.clientX-18}px,${e.clientY-18}px)`});
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),e.target.dataset.delay||0)}),{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.dataset.delay=(i%4)*80;observer.observe(el)});
+  const nav=document.querySelector('nav');
+  window.addEventListener('scroll',()=>nav.style.padding=window.scrollY>60?'12px 48px':'18px 48px');
+</script>
+</body>
+</html>
